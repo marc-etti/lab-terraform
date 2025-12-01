@@ -19,3 +19,10 @@ variable "ssh_public_key" {
 variable "subscription_id" {
   type = string
 }
+
+# Azure service principal credentials
+
+variable "appId" {}
+variable "displayName" {}
+variable "password" {}
+variable "tenant" {}

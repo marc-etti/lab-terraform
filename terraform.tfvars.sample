@@ -3,3 +3,10 @@ location       = "switzerlandnorth"
 admin_username = "azureuser"
 vm_name        = "<VM-name>"
 subscription_id = "<your-subscription-id>"
+
+# azure service principal credentials
+
+appId = "<your-app-id>"
+displayName = "<your-display-name>"
+password = "<your-password>"
+tenant = "<your-tenant-id>"
