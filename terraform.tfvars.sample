@@ -1,0 +1,4 @@
+ssh_public_key = "<your-ssh-public-key>"
+location       = "switzerlandnorth"
+admin_username = "azureuser"
+vm_name        = "<VM-name>"
