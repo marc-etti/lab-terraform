@@ -14,6 +14,11 @@
     ```bash
     mv terraform.tfvars.sample terraform.tfvars
     ```
+4. Aprire il file `terraform.tfvars`
+    ```bash
+    nano terraform.tfvars
+    ```
+
 4. Inserire la propria chiave pubblica SSH nel file `terraform.tfvars`, reperibile nel file `~/.ssh/azure-terraform.pub`: 
    ```bash
    ssh_public_key = "<your-ssh-public-key>"
