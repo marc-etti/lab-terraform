@@ -53,7 +53,7 @@
     ```
 12. Per connettersi alla macchina virtuale:
     ```bash
-    ssh -i ~/.ssh/azure-terraform azureuser@<public-ip-address>
+    ssh -i ~/.ssh/azure_terraform_key azureuser@<public-ip-address>
     ```
 13. Al termine, per distruggere le risorse create:
     ```bash
