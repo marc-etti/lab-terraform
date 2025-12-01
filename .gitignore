@@ -9,9 +9,12 @@
 crash.log
 *.tfplan
 *.plan
+terraform.tfvars
 
 # --- Azure ---
 azureProfile.json
 azureProfile.json.backup
 accessTokens.json
 subscriptions.json
+
+notes.md
