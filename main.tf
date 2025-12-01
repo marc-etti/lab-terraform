@@ -87,6 +87,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   secure_boot_enabled = true
   vtpm_enabled        = true
 
+  plan {
+    name      = "9-base"
+    publisher = "resf"
+    product   = "rockylinux-x86_64"
+  }
+
   # Tags
   tags = {
     environment = "lab"

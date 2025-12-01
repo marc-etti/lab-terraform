@@ -26,6 +26,5 @@ provider "azurerm" {
   client_id       = var.appId
   client_secret   = var.password
   tenant_id       = var.tenant
-  display_name    = var.displayName
   subscription_id = var.subscription_id
 }
