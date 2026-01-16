@@ -1,0 +1,66 @@
+---
+# Installazione MariaDB e dipendenze
+- name: Installare MariaDB e PyMySQL
+  apt:
+    name:
+      - mariadb-server
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Avviare MariaDB
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+# Creazione DB
+- name: Creare database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_user: root
+    login_password: "{{ db_root_password }}"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+# Creazione utente
+- name: Creare utente MySQL
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    host: "%"
+    state: present
+    login_user: root
+    login_password: "{{ db_root_password }}"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+# Template init.sql
+- name: Generare init-db.sql
+  template:
+    src: init-db.sql.j2
+    dest: /init.sql
+
+# Import SQL
+- name: Importare struttura iniziale DB
+  mysql_db:
+    name: "{{ db_name }}"
+    state: import
+    target: /init.sql
+    login_user: root
+    login_password: "{{ db_root_password }}"
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+# Configurare MariaDB per connessioni remote
+- name: Configurare MariaDB per connessioni remote
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 0.0.0.0'
+    state: present
+    backup: yes
+
+- name: Riavviare MariaDB
+  service:
+    name: mariadb
+    state: restarted  

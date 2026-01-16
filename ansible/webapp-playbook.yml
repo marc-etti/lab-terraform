@@ -1,0 +1,31 @@
+---
+# PLAY 1: Database (node2)
+- name: Configurare il database MariaDB
+  hosts: database_node
+  become: true
+
+  vars:
+    db_name: "mydb"
+    db_user: "dbuser"
+    db_password: "password"
+    db_root_password: "rootpassword"
+
+  roles:
+    - database
+
+
+# PLAY 2: Webserver (node1)
+- name: Configurare il webserver Apache + PHP
+  hosts: webserver_node
+  become: true
+
+  vars:
+    db_host: "node2"
+    db_name: "mydb"
+    db_user: "dbuser"
+    db_password: "password"
+    php_version: "8.3"
+    app_root: "/var/www/html"
+
+  roles:
+    - webserver

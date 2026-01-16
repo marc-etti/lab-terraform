@@ -1,0 +1,23 @@
+{# CREATE DATABASE IF NOT EXISTS {{ db_name }};
+
+USE {{ db_name }};
+
+CREATE USER '{{ db_user }}'@'%' IDENTIFIED BY '{{ db_password }}';
+
+GRANT ALL PRIVILEGES ON {{ db_name }}.* TO '{{ db_user }}'@'%';
+
+FLUSH PRIVILEGES; #}
+
+USE {{ db_name }};
+
+CREATE TABLE IF NOT EXISTS posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
+INSERT IGNORE INTO posts (id, content) VALUES
+(1, 'Il futuro dello sviluppo software si basa sempre più sull\'intelligenza artificiale e l\'automazione dei processi.'),
+(2, 'I microservizi stanno diventando l\'architettura preferita per applicazioni scalabili e fault-tolerant.'),
+(3, 'La programmazione funzionale sta guadagnando popolarità grazie alla sua capacità di migliorare la concorrenza e ridurre gli errori.'),
+(4, 'Docker ha rivoluzionato il modo in cui gestiamo e distribuiamo le applicazioni in ambienti di sviluppo e produzione.'),
+(5, 'L\'open source è il cuore dell\'innovazione software, permettendo a chiunque di contribuire e migliorare i progetti.');

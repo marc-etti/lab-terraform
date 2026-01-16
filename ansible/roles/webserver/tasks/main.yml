@@ -1,0 +1,73 @@
+---
+# Repository PHP
+- name: Installare prerequisiti per repository PHP
+  apt:
+    name: software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Aggiungere PPA PHP
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+
+# Installazione PHP + Apache
+- name: Installare PHP {{ php_version }} e Apache
+  apt:
+    name:
+      - "php{{ php_version }}"
+      - "php{{ php_version }}-cli"
+      - "php{{ php_version }}-mysqli"
+      - "libapache2-mod-php{{ php_version }}"
+      - apache2
+    state: present
+    update_cache: yes
+
+# Deploy file PHP tramite template
+- name: Installare index.php da template
+  template:
+    src: index.php.j2
+    dest: "{{ app_root }}/index.php"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+
+# Configurazione VirtualHost
+- name: Configurare VirtualHost Apache
+  copy:
+    dest: /etc/apache2/sites-available/myapp.conf
+    content: |
+      <VirtualHost *:80>
+          ServerName _
+          DocumentRoot {{ app_root }}
+
+          <Directory {{ app_root }}>
+              Options Indexes FollowSymLinks
+              AllowOverride All
+              Require all granted
+          </Directory>
+
+          ErrorLog ${APACHE_LOG_DIR}/myapp-error.log
+          CustomLog ${APACHE_LOG_DIR}/myapp-access.log combined
+      </VirtualHost>
+
+# Attivazione sito
+- name: Disabilitare sito default
+  command: a2dissite 000-default.conf
+  args:
+    removes: /etc/apache2/sites-enabled/000-default.conf
+
+- name: Rimuovere la pagina di default di Apache se esiste
+  file:
+    path: /var/www/html/index.html
+    state: absent
+
+- name: Abilitare il sito myapp
+  command: a2ensite myapp.conf
+  args:
+    creates: /etc/apache2/sites-enabled/myapp.conf
+
+- name: Riavviare Apache
+  service:
+    name: apache2
+    state: restarted

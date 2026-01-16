@@ -18,3 +18,14 @@ accessTokens.json
 subscriptions.json
 
 notes/
+tests/
+
+# --- Soluzioni Esercizi ---
+terraform-docker/esercizio-01-a/
+terraform-docker/esercizio-01-b/
+terraform-docker/esercizio-02-a/
+terraform-docker/esercizio-02-b/
+
+terraform-azure/esercizio-01/
+terraform-azure/esercizio-02/
+terraform-azure/esercizio-03/
