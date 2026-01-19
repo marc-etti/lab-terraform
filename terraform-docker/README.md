@@ -105,28 +105,73 @@ In questo esercizio, si richiede di utilizzare Terraform per eseguire un contain
 
 ## Esercizio 2.b: Deploy di un'Applicazione Web con Ansible
 In questo esercizio si richiede di utilizzare Terraform per creare due container Docker: uno per il database MariaDB e uno per un'applicazione web basata su PHP che si connette al database.
-- Creare un file di configurazione Terraform `main.tf` per la creazione di due container Docker:
+- Creare un file di configurazione Terraform `main.tf` per la creazione di due container Docker e una rete Docker personalizzata per consentire la comunicazione tra i container:
+    - Creare una rete Docker chiamata `app_net`.
+      - Utilizzare la risorsa `docker_network` per creare la rete.
+        esempio:
+        ```hcl
+        resource "docker_network" "app_net" {
+          name = "app_net"
+        }
+        ```
     - Entrambi i container devono essere basati sull'immagine `ubuntu:latest`.
-    - Entrambi i container devono essere configurati per esporre la porta SSH (22).
-      - Mappare la porta 2222 dell'host alla porta 22 del container PHP.
-      - Mappare la porta 2223 dell'host alla porta 22 del container MariaDB.
-      - Configurare i container per installare OpenSSH Server e Python3 all'avvio, simile a quanto fatto nell' `esercizio 2.a`.
     - Il primo container esegue un'applicazione web PHP con le seguenti configurazioni:
         - Nome del container: `php_app_container`
-        - Collegamento al container MariaDB.
-        - Esposizione della porta 8080.
+        - Esposizione della porta 80.
     - Il secondo container esegue MariaDB con le seguenti configurazioni:
         - Nome del container: `mariadb_container`
-        - Variabile d'ambiente per la password di root: `MARIADB_ROOT_PASSWORD=my-secret-pw`
-        - Esposizione della porta 3306.
-- Creare un file outputs.tf per visualizzare le porte esposte dai container.
+    - Entrambi i container devono essere configurati per esporre la porta SSH (22).
+      - Mappare la porta `2222` dell'host alla porta 22 del container `php_app_container`.
+      - Mappare la porta `2223` dell'host alla porta 22 del container `mariadb_container`.
+      - Configurare i container per installare OpenSSH Server e Python3 all'avvio, simile a quanto fatto nell' `esercizio 2.a`.
+- Creare un file `outputs.tf` per visualizzare informazioni utili tipo le porte esposte.
+  - Ad esempio:
+    ```hcl
+    output "php_app_container_name" {
+      description = "Nome del container che ospita l'applicazione PHP"
+      value       = docker_container.php_app.name
+    }
+    output "php_app_http_url" {
+      description = "URL per accedere all'applicazione web PHP dal browser"
+      value       = "http://localhost:${docker_container.php_app.ports[1].external}"
+    }
+    ```
 - Dopo aver creato i file, eseguire i comandi Terraform per inizializzare, pianificare e applicare la configurazione.
 - Verificare che i container Docker siano in esecuzione. Usare il comando `docker ps` per elencare i container in esecuzione.
-- Usare il playbook Ansible `webapp-playbook.yml` e l'inventario ` per configurare presenti nella cartella `ansible/`.
-- Eseguire il playbook Ansible per distribuire l'applicazione web:
-  ```bash
-  ansible-playbook -i ansible/inventory.ini ansible/webapp-playbook.yml
-  ```
-- Verificare che l'applicazione web sia accessibile aprendo un browser web e navigando all'indirizzo `http://localhost:8080`.
+- Usare il playbook Ansible `webapp-playbook.yml` e l'inventario `inventory.ini` presenti nella cartella `ansible/`.
+  - Spostarsi nella cartella `ansible/` e lanciare il playbook con il comando:
+    ```bash
+    ansible-playbook -i inventory.ini webapp-playbook.yml
+    ```
+    il playbook si occuoerà di installare e configurare MariaDB e l'applicazione web PHP nei rispettivi container.
+- Verificare che l'applicazione web sia accessibile aprendo un browser web e navigando all'indirizzo `http://localhost:80`.
 - Infine, distruggere le risorse create con Terraform.
 
+### Risoluzione Problemi di Connessione SSH
+Se si riscontrano problemi di connessione SSH a causa di chiavi host cambiate, è possibile rimuovere le chiavi host obsolete dal file `known_hosts` utilizzando i seguenti comandi:
+```bash
+ssh-keygen -f /home/andrea/.ssh/known_hosts -R '[127.0.0.1]:2223' && \
+ssh-keygen -f /home/andrea/.ssh/known_hosts -R '[127.0.0.1]:2222'
+```
+
+## Esercizio 2.c: Utilizzo di variables.tf e terraform.tfvars
+In questo esercizio, si richiede di migliorare la configurazione Terraform dell'esercizio 2.b utilizzando un file `variables.tf` per definire le variabili.
+- Creare un file `variables.tf` per definire le seguenti variabili:
+  - Rete Docker: `var.docker_network_name` con valore predefinito `app_net`.
+  - Nome del container PHP: `var.php_container_name` con valore predefinito `php_app_container`.
+  - Nome del container MariaDB: `var.mariadb_container_name` con valore predefinito `mariadb_container`.
+  - Porta SSH del container PHP: `var.php_ssh_port` con valore predefinito `2222`.
+  - Porta SSH del container MariaDB: `var.mariadb_ssh_port` con valore predefinito `2223`.
+- Creare un file `terraform.tfvars` per assegnare valori personalizzati alle variabili definite in `variables.tf`.
+  - Ad esempio:
+    ```hcl
+    docker_network_name = "custom_app_net"
+    php_container_name  = "custom_php_app_container"
+    mariadb_container_name = "custom_mariadb_container"
+    php_ssh_port        = 2222
+    mariadb_ssh_port    = 2223
+    ```
+- Modificare il file `main.tf` per utilizzare queste variabili al posto dei valori hardcoded.
+- Eseguire i comandi Terraform per inizializzare, pianificare e applicare la configurazione.
+- Verificare che i container Docker siano in esecuzione con i nomi specificati dalle variabili.
+- Infine, distruggere le risorse create con Terraform.

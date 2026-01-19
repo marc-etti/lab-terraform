@@ -1,5 +1,5 @@
 ---
-# PLAY 1: Database (node2)
+# PLAY 1: Database (mariadb_container)
 - name: Configurare il database MariaDB
   hosts: database_node
   become: true
@@ -14,13 +14,13 @@
     - database
 
 
-# PLAY 2: Webserver (node1)
+# PLAY 2: Webserver (php_app_container)
 - name: Configurare il webserver Apache + PHP
   hosts: webserver_node
   become: true
 
   vars:
-    db_host: "node2"
+    db_host: "mariadb_container"
     db_name: "mydb"
     db_user: "dbuser"
     db_password: "password"
