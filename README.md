@@ -22,7 +22,7 @@
 
 
 ## Terraform + Docker
-[READMI esercizi Terraform + Docker](terraform-docker/README.md)
+[README esercizi Terraform + Docker](terraform-docker/README.md)
 
 ## Terraform + Azure
 [README esercizi Terraform + Azure](terraform-azure/README.md)
