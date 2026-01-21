@@ -4,8 +4,8 @@ Importante: Ogni esercizio va svolto in una directory separata.
 
 
 ## Esercizio 1: Creazione di una Risorsa Azure con Terraform
-In questo esercizio, configureremo Terraform per creare una Virtual Network e una Subnet in Azure all'interno di un Resource Group esistente chiamato `rg-agews-unife-course`.
-Indicazioni:
+In questo esercizio, configureremo Terraform per creare una Virtual Network e una Subnet in Azure all'interno di un Resource Group esistente chiamato `rg-agews-unife-training`.
+### Indicazioni:
 - Utilizzare il provider Azure (azurerm) per Terraform.
   ```hcl
   terraform {
@@ -59,18 +59,18 @@ Indicazioni:
     subscription_id = var.subscription_id
   }
   ```
-- In questo laboratorio creeremo risorse all'interno del Resource Group esistente chiamato `rg-agews-unife-course`.
+- In questo laboratorio creeremo risorse all'interno del Resource Group esistente chiamato `rg-agews-unife-training`.
   Definiamo quindi un data source per fare riferimento a questo Resource Group:
   ```hcl
   # Resource Group ESISTENTE (non viene creato da Terraform)
   data "azurerm_resource_group" "course_rg" {
-    name = "rg-agews-unife-course"
+    name = "rg-agews-unife-training"
   }
   ```
 - Creare una risorsa di tipo Virtual Network (`azurerm_virtual_network`) con le seguenti specifiche:
   - Nome: `vnet-course-nome-cognome`
   - Location: stessa del Resource Group esistente
-  - Resource Group: `rg-agews-unife-course`
+  - Resource Group: `rg-agews-unife-training`
   - Address Space: `["10.0.0.0/16"]`
   ```hcl
   # Virtual Network
@@ -87,7 +87,7 @@ Indicazioni:
   ```
 - Creare una risorsa di tipo Subnet (`azurerm_subnet`) con le seguenti specifiche:
   - Nome: `subnet-course-nome-cognome`
-  - Resource Group: `rg-agews-unife-course`
+  - Resource Group: `rg-agews-unife-training`
   - Virtual Network: `vnet-course-nome-cognome`
   - Address Prefix: `["10.0.1.0/24"]`
   ```hcl
@@ -107,8 +107,8 @@ Indicazioni:
   ```
 - Verificare la creazione delle risorse tramite il portale Azure o Azure CLI:
   ```bash
-  az network vnet show --name vnet-course-nome-cognome --resource-group rg-agews-unife-course
-  az network vnet subnet show --name subnet-course-nome-cognome --vnet-name vnet-course-nome-cognome --resource-group rg-agews-unife-course
+  az network vnet show --name vnet-course-nome-cognome --resource-group rg-agews-unife-training
+  az network vnet subnet show --name subnet-course-nome-cognome --vnet-name vnet-course-nome-cognome --resource-group rg-agews-unife-training
   ```
 - Distruggere le risorse create con il comando:
   ```bash
@@ -129,7 +129,7 @@ Obiettivo
 - Ubuntu 22.04 LTS Gen2 (immagine Canonical)
 - Cloud-init per installare python3 e configurare sudo senza password (utile per Ansible)
 
-### Indicazioni
+### Indicazioni:
 - File `main.tf`
   Utilizzare il provider Azure (azurerm) per Terraform:
   ```hcl
@@ -157,13 +157,10 @@ Obiettivo
   Le risorse non creano il Resource Group: Terraform deve solo “agganciarlo”.
   ```hcl
   data "azurerm_resource_group" "course_rg" {
-    name = "rg-agews-unife-course"
-    # oppure (come in soluzione) un RG diverso, se indicato dal docente:
-    # name = "Gruppo-Test-01"
+    name = "rg-agews-unife-training"
   }
   ```
-- Variabili richieste (variables.tf)
-  Creare un file variables.tf con queste variabili:
+- Creare un file `variables.tf` con le seguenti variabili:
   ```hcl
   variable "subscription_id" {
     type        = string
@@ -178,8 +175,7 @@ Obiettivo
     description = "Chiave pubblica SSH per l'utente admin della VM"
   }
   ```
-- Valori variabili (terraform.tfvars)
-  Creare il file terraform.tfvars per valorizzare le variabili:
+- Creare il file `terraform.tfvars` per definire i valori delle variabili:
   ```hcl
   subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   suffix          = "nome-cognome"
@@ -190,11 +186,20 @@ Obiettivo
   ```bash
   az account show
   ```
-  Per ottenere una chiave pubblica (se non la hai già):
-  ```bash
-  ssh-keygen -t ed25519 -C "nome.cognome"
-  cat ~/.ssh/id_ed25519.pub
-  ```
+### Chiavi SSH
+-  Per ottenere una coppia di chiavi SSH (se non le avete già), usare:
+    ```bash
+    ssh-keygen -t ed25519 -C "nome.cognome"
+    ```
+  - Chiave pubblica di default in `~/.ssh/id_ed25519.pub`.
+    ```bash
+    cat ~/.ssh/id_ed25519.pub
+    ```
+  - Chiave privata di default in `~/.ssh/id_ed25519`.
+    ```bash
+    cat ~/.ssh/id_ed25519
+    ```
+
 
 ### Risorse da creare:
 Nel file main.tf, implementare le seguenti risorse:
@@ -223,32 +228,109 @@ Nel file main.tf, implementare le seguenti risorse:
 ### Comandi Terraform
 
 Eseguire i comandi nella directory dell’esercizio:
-
+```bash
 terraform init
 terraform plan
 terraform apply
-
-Verifica con Azure CLI
+```
+### Verifica con Azure CLI
 
 Verificare le risorse create (adatta i nomi con il tuo suffix):
-
+```bash
 az vm show \
   --name Ubuntu-2204-nome-cognome \
-  --resource-group rg-agews-unife-course \
+  --resource-group rg-agews-unife-training \
   --show-details
 
 az network public-ip show \
   --name Ubuntu-2204-ip-nome-cognome \
-  --resource-group rg-agews-unife-course \
+  --resource-group rg-agews-unife-training \
   --query ipAddress -o tsv
+```
 
-
+### Connessione SSH alla VM
 Per verificare la connettività SSH (dopo aver recuperato l’IP pubblico):
+```bash
+ssh -i ~/.ssh/<NOME_CHIAVE_PRIVATA> azureuser@<IP_PUBBLICO>
+```
 
-ssh azureuser@<IP_PUBBLICO>
+### Utilizzo di Ansible
+creare un file `inventory.ini` con il seguente contenuto (adatta con il tuo IP pubblico):
+```ini
+[vm]
+vm1 ansible_host=<IP_PUBBLICO> ansible_user=azureuser ansible_ssh_private_key_file=~/.ssh/<PRIVATE_KEY_FILE>
+```
+Dove:
+- `<IP_PUBBLICO>` è l’indirizzo IP pubblico della VM (recuperato dall'output di `terraform apply`)
+- `<PRIVATE_KEY_FILE>` è il file della chiave privata SSH corrispondente alla chiave pubblica usata per creare la VM. Solitamente è `~/.ssh/id_ed25519` o `~/.ssh/id_rsa`.
 
-Distruzione risorse
+Eseguire un ping con Ansible per verificare la connettività:
+```bash
+ansible -i inventory.ini vm -m ping
+```
+
+creare un file `playbook.yml` con il seguente contenuto:
+```yaml
+---
+- name: Check Ansible + update sistema (Ubuntu)
+  hosts: vm
+  become: true
+
+  tasks:
+    - name: Verifica connettivita' Ansible (ping)
+      ansible.builtin.ping:
+
+    - name: Raccoglie facts (verifica che funzioni la raccolta info)
+      ansible.builtin.setup:
+
+    - name: Mostra info principali
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel: {{ ansible_kernel }}"
+          - "IP: {{ ansible_default_ipv4.address | default('n/a') }}"
+
+    - name: Aggiorna cache apt
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Aggiorna pacchetti (safe upgrade)
+      ansible.builtin.apt:
+        upgrade: safe
+
+    - name: Rimuove dipendenze non piu' necessarie
+      ansible.builtin.apt:
+        autoremove: true
+
+    - name: Pulisce cache apt
+      ansible.builtin.apt:
+        autoclean: true
+```
+Il playbook si occupa di:
+- Verificare la connettività Ansible
+- Raccogliere facts
+- Mostrare alcune informazioni di sistema
+- Aggiornare la cache di apt
+- Eseguire un upgrade sicuro dei pacchetti
+- Rimuovere dipendenze non più necessarie
+- Pulire la cache di apt
+
+Eseguire il playbook:
+```bash
+ansible-playbook -i inventory.ini playbook.yml
+```
+Verificare che tutte le operazioni siano andate a buon fine.
+
+### Distruzione risorse
 
 Al termine dell’esercizio:
-
+```
 terraform destroy
+```
+
+Per verificare che tutte le risorse siano state eliminate, usare Azure CLI:
+```bash
+az vm list --resource-group rg-agews-unife-training -o table
+``` 

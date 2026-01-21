@@ -17,6 +17,9 @@ azureProfile.json.backup
 accessTokens.json
 subscriptions.json
 
+# --- Ansible ---
+vm.yml
+
 notes/
 tests/
 
