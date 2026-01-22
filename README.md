@@ -18,7 +18,7 @@
    az login
    ```
    Si aprirà una pagina web per completare l'autenticazione.
-5. Assicurarsi di vedere il resource group `rg-agews-unife-course` nella sezione: gruppi di risorse del portale Azure.
+5. Assicurarsi di vedere il resource group `rg-agews-unife-training` nella sezione: gruppi di risorse del portale Azure.
 
 
 ## Terraform + Docker

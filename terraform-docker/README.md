@@ -1,6 +1,13 @@
 # Laboratorio Terraform con Docker
 Importante: Ogni esercizio va svolto in una directory separata.
 
+### Link utili:
+- [Documentazione Ufficiale Terraform Docker Provider](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs)
+  - [Container](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container)
+  - [Image](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image)
+  - [Network](https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/network)
+- [Documentazione Ufficiale Terraform](https://www.terraform.io/docs/index.html)
+
 
 ## Esercizio 1.a: Creazione di un Container Docker con Terraform
 In questo esercizio, si richiede di creare un file di configurazione Terraform `main.tf` per eseguire un container Docker che esegue Nginx.

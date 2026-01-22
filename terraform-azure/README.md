@@ -1,7 +1,14 @@
 # Laboratorio Terraform - Azure
 Importante: Ogni esercizio va svolto in una directory separata.
 
-
+### Link utili:
+- [Documentazione Ufficiale Terraform AzureRM Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+  - [Virtual Network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
+  - [Subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet)
+  - [Linux Virtual Machine](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine)
+  - [Public IP](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip)
+  - [Network Security Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group)
+  - [Network Interface](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface)
 
 ## Esercizio 1: Creazione di una Risorsa Azure con Terraform
 In questo esercizio, configureremo Terraform per creare una Virtual Network e una Subnet in Azure all'interno di un Resource Group esistente chiamato `rg-agews-unife-training`.
@@ -23,6 +30,8 @@ In questo esercizio, configureremo Terraform per creare una Virtual Network e un
   Per ottenere la `subscription_id` si usa ul comando Azure CLI:
   ```bash
   az account show
+  ```
+  L'output sarà simile al seguente:
   ```json
   {
     "cloudName": "AzureCloud",
@@ -33,7 +42,7 @@ In questo esercizio, configureremo Terraform per creare una Virtual Network e un
     "name": "Azure subscription 1",
     "state": "Enabled",
     "tenantDefaultDomain": "agews.com",
-    "tenantDisplayName": "AGE WEB SOLUTIONS S.R.L. A SOCIO UNICO",
+    "tenantDisplayName": "AGE WEB SOLUTIONS ... ",
     "tenantId": "...",
     "user": {
       "name": "mia_mail@mail.com",
