@@ -1,0 +1,36 @@
+---
+- name: Check Ansible + update sistema (Ubuntu)
+  hosts: vm
+  become: true
+
+  tasks:
+    - name: Verifica connettivita' Ansible (ping)
+      ansible.builtin.ping:
+
+    - name: Raccoglie facts (verifica che funzioni la raccolta info)
+      ansible.builtin.setup:
+
+    - name: Mostra info principali
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel: {{ ansible_kernel }}"
+          - "IP: {{ ansible_default_ipv4.address | default('n/a') }}"
+
+    - name: Aggiorna cache apt
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Aggiorna pacchetti (safe upgrade)
+      ansible.builtin.apt:
+        upgrade: safe
+
+    - name: Rimuove dipendenze non piu' necessarie
+      ansible.builtin.apt:
+        autoremove: true
+
+    - name: Pulisce cache apt
+      ansible.builtin.apt:
+        autoclean: true
