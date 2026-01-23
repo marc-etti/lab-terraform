@@ -1,0 +1,7 @@
+---
+- name: Test connection to Docker container
+  hosts: docker_containers
+  gather_facts: false
+  tasks:
+    - name: Ping the container
+      ping:
