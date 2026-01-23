@@ -91,6 +91,7 @@ In questo esercizio, si richiede di utilizzare Terraform per eseguire un contain
 - Creare un playbook Ansible `playbook.yml` per eseguire un semplice comando di test.
   `playbook.yml`:
   ```yaml
+  ---
   - name: Test connection to Docker container
     hosts: docker_containers
     gather_facts: false
@@ -157,8 +158,8 @@ In questo esercizio si richiede di utilizzare Terraform per creare due container
 ### Risoluzione Problemi di Connessione SSH
 Se si riscontrano problemi di connessione SSH a causa di chiavi host cambiate, è possibile rimuovere le chiavi host obsolete dal file `known_hosts` utilizzando i seguenti comandi:
 ```bash
-ssh-keygen -f /home/andrea/.ssh/known_hosts -R '[127.0.0.1]:2223' && \
-ssh-keygen -f /home/andrea/.ssh/known_hosts -R '[127.0.0.1]:2222'
+ssh-keygen -f ~/.ssh/known_hosts -R '[127.0.0.1]:2223' && \
+ssh-keygen -f ~/.ssh/known_hosts -R '[127.0.0.1]:2222'
 ```
 
 ## Esercizio 2.c: Utilizzo di variables.tf e terraform.tfvars
